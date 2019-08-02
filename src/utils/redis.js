@@ -1,4 +1,4 @@
-import redis from 'src/utils/redis';
+import redis from 'redis';
 import { promisify } from 'util';
 
 export const client = redis.createClient(`redis://${process.env.REDIS_URL}`, { password: process.env.REDIS_PASSWORD });
