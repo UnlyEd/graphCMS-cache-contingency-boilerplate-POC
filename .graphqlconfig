@@ -3,7 +3,7 @@
   "extensions": {
     "endpoints": {
       "staging": {
-        "url": "https://api-euwest.graphcms.com/v1/YOUR_GCMS_ENDPOINT_ID/staging",
+        "url": "https://api-euwest.graphcms.com/v1/cjyuppywr0blt01dj2i040xrp/master",
         "introspect": true,
         "headers": {
           "user-agent": "JS GraphQL - GCMS Cache contingency",
