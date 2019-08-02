@@ -1,0 +1,23 @@
+{
+  "schemaPath": "schema.graphql",
+  "extensions": {
+    "endpoints": {
+      "staging": {
+        "url": "https://api-euwest.graphcms.com/v1/YOUR_GCMS_ENDPOINT_ID/staging",
+        "introspect": true,
+        "headers": {
+          "user-agent": "JS GraphQL - GCMS Cache contingency",
+          "Authorization": "Bearer ${env:GRAPHCMS_TOKEN}"
+        }
+      },
+      "production": {
+        "url": "https://api-euwest.graphcms.com/v1/YOUR_GCMS_ENDPOINT_ID/master",
+        "introspect": true,
+        "headers": {
+          "user-agent": "JS GraphQL - GCMS Cache contingency",
+          "Authorization": "Bearer ${env:GRAPHCMS_TOKEN}"
+        }
+      }
+    }
+  }
+}

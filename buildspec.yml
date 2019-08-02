@@ -1,0 +1,39 @@
+version: 0.2
+# XXX You only need to configure this if you want to configure CI builds
+env:
+  # Please refer to https://github.com/UnlyEd/slack-codebuild
+  variables:
+    SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/xxxxx/xxxxxx/xxxxxxx" # TODO configure, then remove comment - Only necessary if you want to get notifications on your slack channel
+    CODEBUILD_NOTIFY_ONLY_IF_FAIL: 1
+    CC_TEST_REPORTER_ID: xxx # TODO configure, then remove comment (64 chars token) - Only necessary if you want to use CodeClimate
+
+phases: # XXX Shouldn't need to update this, except if you add advanced testing that needs particular configuration
+  install:
+    runtime-versions:
+      docker: 18
+      nodejs: 10
+    commands:
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2&
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+      - yarn --production=false
+      - yarn global add @unly/slack-codebuild
+
+  # See https://github.com/codeclimate/test-reporter/issues/379 for additional info regarding how to setup CodeBuild with CodeClimate
+  pre_build:
+    commands:
+      - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+      - chmod +x ./cc-test-reporter
+      - ./cc-test-reporter before-build
+
+  build:
+    commands:
+      - yarn start:redis:daemon
+      - yarn test:coverage
+      - yarn stop:redis
+
+  post_build:
+    commands:
+      - ./cc-test-reporter format-coverage -t lcov --prefix ${CODEBUILD_SRC_DIR} # Looks for ./coverage/lcov.info
+      - ./cc-test-reporter after-build -t lcov --exit-code $? # Uploads ./coverage/lcov.info and ./coverage/codeclimate.json
+    finally:
+      - slack-codebuild

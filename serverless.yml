@@ -1,0 +1,169 @@
+service: gcms-cache
+#tenant: your-serverless-framework-enterprise-tenant # TODO Enable this if you want to use the SLS Framework Enterprise for monitoring (not required, may help troubleshoot issues, need to be configured first though)
+#app: gcms-cache
+frameworkVersion: "=1.49.0"
+
+plugins:
+  - serverless-webpack # https://github.com/serverless-heaven/serverless-webpack
+  - serverless-sentry # https://github.com/arabold/serverless-sentry-plugin/issues/30 (https://github.com/arabold/serverless-sentry-plugin)
+  - serverless-offline # See https://github.com/dherault/serverless-offline
+  - '@unly/serverless-env-copy-plugin' # See https://github.com/UnlyEd/serverless-env-copy-plugin
+  - serverless-domain-manager # See https://github.com/amplify-education/serverless-domain-manager
+  - serverless-dotenv-plugin # See https://www.npmjs.com/package/serverless-dotenv-plugin
+
+package:
+  individually: true
+
+custom:
+  serverless-offline:
+    port: 8085
+    showDuration: true
+  environment: ${env:NODE_ENV, 'development'}
+  envs:
+    development: # XXX Kept for compatibility but useless, development stage doesn't go to AWS
+      profile:
+      domain:
+        name:
+      memorySize:
+    staging:
+      profile: 'tfp-staging' # TODO use the AWS profile your want (we split staging/prod between different AWS accounts, but feel free to use the same if you don't do it our way)
+      domain:
+        name: staging.cache.your-org.com # TODO use the domain name you want, see https://github.com/amplify-education/serverless-domain-manager
+      memorySize: 128
+    production:
+      profile: 'tfp-production' # TODO use the AWS profile your want (we split staging/prod between different AWS accounts, but feel free to use the same if you don't do it our way)
+      domain:
+        name: cache.your-org.com # TODO use the domain name you want, see https://github.com/amplify-education/serverless-domain-manager
+      memorySize: 128
+  sentry: # XXX Duplicated in .sentryclirc and both must be updated accordingly
+    dsn: https://xxx:xxx@sentry.io/xxxxxx # TODO
+    organization: your-org # TODO
+    project: gcms-cache # TODO
+    authToken: xxxx # TODO 64 chars token
+    release: # https://github.com/arabold/serverless-sentry-plugin#releases
+      version: true
+    filterLocal: true # Filter local errors to avoid noise in localhost
+    environment: ${self:custom.environment}
+  webpack:
+    webpackConfig: 'webpack.config.js'
+    includeModules:
+      forceExclude:
+        - aws-sdk
+    packager: 'yarn'
+    packagerOptions: {}
+    excludeFiles: src/**/*.test.js
+    keepOutputDirectory: true
+  customDomain:
+    enabled: true
+    domainName: ${self:custom.envs.${self:provider.stage}.domain.name}
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
+provider:
+  name: aws
+  runtime: nodejs10.x # AWS keeps up to date with the latest v10 version - See https://forum.serverless.com/t/node-10-lambdas-on-aws/8302/2
+  versionFunctions: false # See https://serverless.com/framework/docs/providers/aws/guide/functions#versioning-deployed-functions
+  logRetentionInDays: 60
+  stage: ${self:custom.environment}
+  region: eu-west-1
+  memorySize: ${self:custom.envs.${self:provider.stage}.memorySize, '128'}
+  timeout: 30
+  logs:
+    restApi: true # Enable logs in other services, such as API GW - See https://serverless.com/blog/framework-release-v142/
+  deploymentBucket:
+    serverSideEncryption: AES256
+  environment:
+    NODE_ENV: ${self:custom.environment}
+  profile: ${self:custom.envs.${self:provider.stage}.profile, ''}
+  stackTags:
+    env: ${self:custom.environment}
+    stage: ${self:provider.stage}
+    region: ${self:provider.region}
+    service: ${self:service}
+    service-type: api
+    runtime: ${self:provider.runtime}
+
+functions:
+  cache-query:
+    handler: src/functions/cache-query.cacheQuery
+    events:
+      - http:
+          method: POST
+          path: /cache-query
+          cors: true
+
+  refresh-cache:
+    handler: src/functions/refresh-cache.refreshCache
+    events:
+      - http:
+          method: POST
+          path: /refresh-cache
+          cors: true
+
+  status:
+    handler: src/functions/status.status
+    events:
+      - http:
+          method: GET
+          path: /status
+          cors: true
+
+  read-cache:
+    handler: src/functions/read-cache.readCache
+    events:
+      - http:
+          method: GET
+          path: /read-cache
+          cors: true
+          authorizer: # See https://medium.com/@Da_vidgf/http-basic-auth-with-api-gateway-and-serverless-5ae14ad0a270
+            name: authorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: request
+  authorizer:
+    handler: src/authorizers/basic-auth.handler
+
+resources:
+  Conditions:
+    IsProduction:
+      Fn::Equals:
+        - ${self:custom.environment}
+        - "production"
+  Resources:
+    GatewayResponse:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.WWW-Authenticate: "'Basic'"
+        ResponseType: UNAUTHORIZED
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
+        StatusCode: '401'
+    healthCheck:
+      Condition: IsProduction # Only deploy HealthCheck in production environment
+      Type: "AWS::Route53::HealthCheck"
+      Properties:
+        HealthCheckConfig:
+          EnableSNI: true
+          FailureThreshold: "3"
+          FullyQualifiedDomainName: ${self:custom.envs.${self:provider.stage}.domain.name}
+          ResourcePath: "/status" # XXX Optimize cost by hitting a simple endpoint which doesn't download anything and avoid cost due to data transfer (S3, API Gateway)
+          MeasureLatency: false # XXX Cost $1/stage/month ($2/month for staging + production)
+          Port: "80"
+          Regions: # XXX Only check from UE/US (minimum 3 regions is required), cost much less money and not useful to check from all datacenters in the world
+            - 'eu-west-1' # Ireland
+            - 'us-west-1' # California
+            - 'us-east-1' # Virginia
+          RequestInterval: "30" # 30 is the max allowed
+          Type: "HTTPS"
+        HealthCheckTags:
+          - Key: "env"
+            Value: ${self:custom.environment}
+          - Key: "stage"
+            Value: ${self:provider.stage}
+          - Key: "region"
+            Value: ${self:provider.region}
+          - Key: "service"
+            Value: ${self:service}
+          - Key: "service-type"
+            Value: api

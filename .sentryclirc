@@ -1,0 +1,7 @@
+[defaults]
+url=https://xxx:xxx@sentry.io
+org=TODO (my-org)
+project=TODO (my-project)
+
+[auth]
+token=TODO (64 chars token)
