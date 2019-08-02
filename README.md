@@ -1,6 +1,4 @@
-[![Maintainability](https://api.codeclimate.com/v1/badges/6a8ad4a7a9cc1960ad08/maintainability)](https://codeclimate.com/repos/5d369d3a8a6897014d00a5ad/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/6a8ad4a7a9cc1960ad08/test_coverage)](https://codeclimate.com/repos/5d369d3a8a6897014d00a5ad/test_coverage)
-[![AWS CodeBuild](https://codebuild.eu-west-1.amazonaws.com/badges?uuid=eyJlbmNyeXB0ZWREYXRhIjoiUWJoQjV2NVBHVGNpV1ZwUDRnRWpxTVhaMG1idUxQZ0pFOCtqbWZMbDFSMVZPZ1lWcFU2UlJUZWJsc2kzcHQxTU8wek9yWVkrRyttRmoweTQyU3pQNndNPSIsIml2UGFyYW1ldGVyU3BlYyI6Imx6dDdLQUxTY1F3bXVuN24iLCJtYXRlcmlhbFNldFNlcmlhbCI6MX0%3D&branch=master)](https://eu-west-1.console.aws.amazon.com/codesuite/codebuild/projects/graphcms-cache/)
+[![Maintainability](https://api.codeclimate.com/v1/badges/0f11fc87cdd4240d17e6/maintainability)](https://codeclimate.com/github/UnlyEd/graphCMS-cache-contingency-boilerplate/maintainability)
 
 # GraphCMS Cache Contingency
 
