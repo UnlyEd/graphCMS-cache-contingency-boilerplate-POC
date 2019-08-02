@@ -19,12 +19,12 @@ const promptObj = {
       name: 'Send query 1',
       value: 'send-cache1',
       callback: sendQuery,
-      arg: querySchemaData2,
+      arg: querySchemaData,
     }, {
       name: 'Send query 2',
       value: 'send-cache2',
       callback: sendQuery,
-      arg: querySchemaData,
+      arg: querySchemaData2,
     }, {
       name: 'Refresh all cache',
       value: 'refresh-cache',
