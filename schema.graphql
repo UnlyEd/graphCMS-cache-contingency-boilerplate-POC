@@ -15,7 +15,7 @@ type AggregateAsset {
   count: Int!
 }
 
-type AggregateSites {
+type AggregateSite {
   count: Int!
 }
 
@@ -78,17 +78,17 @@ type BatchPayload {
 
 type Mutation {
   createAsset(data: AssetCreateInput!): Asset!
-  createSites(data: SitesCreateInput!): Sites!
+  createSite(data: SiteCreateInput!): Site!
   deleteAsset(where: AssetWhereUniqueInput!): Asset
   deleteManyAssets(where: AssetWhereInput): BatchPayload!
-  deleteManySiteses(where: SitesWhereInput): BatchPayload!
-  deleteSites(where: SitesWhereUniqueInput!): Sites
+  deleteManySites(where: SiteWhereInput): BatchPayload!
+  deleteSite(where: SiteWhereUniqueInput!): Site
   updateAsset(data: AssetUpdateInput!, where: AssetWhereUniqueInput!): Asset
   updateManyAssets(data: AssetUpdateManyMutationInput!, where: AssetWhereInput): BatchPayload!
-  updateManySiteses(data: SitesUpdateManyMutationInput!, where: SitesWhereInput): BatchPayload!
-  updateSites(data: SitesUpdateInput!, where: SitesWhereUniqueInput!): Sites
+  updateManySites(data: SiteUpdateManyMutationInput!, where: SiteWhereInput): BatchPayload!
+  updateSite(data: SiteUpdateInput!, where: SiteWhereUniqueInput!): Site
   upsertAsset(create: AssetCreateInput!, update: AssetUpdateInput!, where: AssetWhereUniqueInput!): Asset!
-  upsertSites(create: SitesCreateInput!, update: SitesUpdateInput!, where: SitesWhereUniqueInput!): Sites!
+  upsertSite(create: SiteCreateInput!, update: SiteUpdateInput!, where: SiteWhereUniqueInput!): Site!
 }
 
 "Information about pagination in a connection."
@@ -112,12 +112,12 @@ type Query {
     #The ID of an object
     id: ID!
   ): Node
-  sites(where: SitesWhereUniqueInput!): Sites
-  siteses(after: String, before: String, first: Int, last: Int, orderBy: SitesOrderByInput, skip: Int, where: SitesWhereInput): [Sites]!
-  sitesesConnection(after: String, before: String, first: Int, last: Int, orderBy: SitesOrderByInput, skip: Int, where: SitesWhereInput): SitesConnection!
+  site(where: SiteWhereUniqueInput!): Site
+  sites(after: String, before: String, first: Int, last: Int, orderBy: SiteOrderByInput, skip: Int, where: SiteWhereInput): [Site]!
+  sitesConnection(after: String, before: String, first: Int, last: Int, orderBy: SiteOrderByInput, skip: Int, where: SiteWhereInput): SiteConnection!
 }
 
-type Sites implements Node {
+type Site implements Node {
   createdAt: DateTime!
   id: ID!
   status: Status!
@@ -126,23 +126,23 @@ type Sites implements Node {
 }
 
 "A connection to a list of items."
-type SitesConnection {
-  aggregate: AggregateSites!
+type SiteConnection {
+  aggregate: AggregateSite!
   "A list of edges."
-  edges: [SitesEdge]!
+  edges: [SiteEdge]!
   "Information to aid in pagination."
   pageInfo: PageInfo!
 }
 
 "An edge in a connection."
-type SitesEdge {
+type SiteEdge {
   "A cursor for use in pagination."
   cursor: String!
   "The item at the end of the edge."
-  node: Sites!
+  node: Site!
 }
 
-type SitesPreviousValues {
+type SitePreviousValues {
   createdAt: DateTime!
   id: ID!
   status: Status!
@@ -150,10 +150,10 @@ type SitesPreviousValues {
   url: String!
 }
 
-type SitesSubscriptionPayload {
+type SiteSubscriptionPayload {
   mutation: MutationType!
-  node: Sites
-  previousValues: SitesPreviousValues
+  node: Site
+  previousValues: SitePreviousValues
   updatedFields: [String!]
 }
 
@@ -220,7 +220,7 @@ enum MutationType {
   UPDATED
 }
 
-enum SitesOrderByInput {
+enum SiteOrderByInput {
   createdAt_ASC
   createdAt_DESC
   id_ASC
@@ -550,21 +550,21 @@ input ImageTransformationInput {
   resize: ImageResizeInput
 }
 
-input SitesCreateInput {
+input SiteCreateInput {
   status: Status
   url: String!
 }
 
-input SitesSubscriptionWhereInput {
+input SiteSubscriptionWhereInput {
   "Logical AND on all given filters."
-  AND: [SitesSubscriptionWhereInput!]
+  AND: [SiteSubscriptionWhereInput!]
   "Logical NOT on all given filters combined by AND."
-  NOT: [SitesSubscriptionWhereInput!]
+  NOT: [SiteSubscriptionWhereInput!]
   "Logical OR on all given filters."
-  OR: [SitesSubscriptionWhereInput!]
+  OR: [SiteSubscriptionWhereInput!]
   "The subscription event gets dispatched when it's listed in mutation_in"
   mutation_in: [MutationType!]
-  node: SitesWhereInput
+  node: SiteWhereInput
   "The subscription event gets only dispatched when one of the updated fields names is included in this list"
   updatedFields_contains: String
   "The subscription event gets only dispatched when all of the field names included in this list have been updated"
@@ -573,23 +573,23 @@ input SitesSubscriptionWhereInput {
   updatedFields_contains_some: [String!]
 }
 
-input SitesUpdateInput {
+input SiteUpdateInput {
   status: Status
   url: String
 }
 
-input SitesUpdateManyMutationInput {
+input SiteUpdateManyMutationInput {
   status: Status
   url: String
 }
 
-input SitesWhereInput {
+input SiteWhereInput {
   "Logical AND on all given filters."
-  AND: [SitesWhereInput!]
+  AND: [SiteWhereInput!]
   "Logical NOT on all given filters combined by AND."
-  NOT: [SitesWhereInput!]
+  NOT: [SiteWhereInput!]
   "Logical OR on all given filters."
-  OR: [SitesWhereInput!]
+  OR: [SiteWhereInput!]
   createdAt: DateTime
   "All values greater than the given value."
   createdAt_gt: DateTime
@@ -683,7 +683,7 @@ input SitesWhereInput {
   url_starts_with: String
 }
 
-input SitesWhereUniqueInput {
+input SiteWhereUniqueInput {
   id: ID
 }
 
