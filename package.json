@@ -1,8 +1,8 @@
 {
   "name": "gcms-cache",
   "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
+  "description": "The main goal of this service is to provide a reliable cache contingency backup plan in case a GraphCMS endpoint is failing.",
+  "license": "MIT",
   "scripts": {
     "sls:dotenv": "NODE_ENV=${NODE_ENV:-development}; sls dotenv",
     "sls:login": "serverless login",
