@@ -29,6 +29,7 @@ Clone the repo, then configure your local install:
 - `nvm use` or `nvm install`
 - `yarn install`
 - Look for `TODO` in project file and update values (also remove inline comments in .yml files, they're not supported and comments will be used as value as well)
+- Pro tip: Look at [this PR](https://github.com/UnlyEd/graphCMS-cache-contingency-boilerplate/pull/1) to see what I've done to make it work locally, it'll give you a head start! ;)
 - `yarn start` # Start localhost:8085
 - Go to `/status` and `/read-cache`
 - `yarn emulate:client` play around with fake queries sent to :8085 and see how /read-cache data changes
