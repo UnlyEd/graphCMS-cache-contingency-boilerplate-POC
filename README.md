@@ -20,6 +20,10 @@ But it also has other benefits:
 
 ## Getting started
 
+Watch this 10mn video to understand and see it in action!
+
+[![GraphCMS Cache COntingency in action](https://img.youtube.com/vi/k4Bd-XHmiBM/0.jpg)](https://youtu.be/k4Bd-XHmiBM)
+
 Clone the repo, then configure your local install:
 
 - `nvm use` or `nvm install`

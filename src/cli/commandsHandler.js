@@ -3,7 +3,7 @@ import logSymbols from 'log-symbols';
 import fetch from 'node-fetch';
 
 const logger = createLogger({
-  label: 'Basic Auth',
+  label: 'Emulated client (CLI)',
 });
 
 const readCacheRoute = '/cache-query';

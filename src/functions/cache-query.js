@@ -56,6 +56,7 @@ export const cacheQuery = RavenLambdaWrapper.handler(Raven, async (event, contex
         throw cacheError;
       }
     } catch (e) {
+      logger.error(e);
       Raven.setContext({ queryAsked: query });
       Raven.captureException(e); // TODO add context data (query)
       if (!error) {
@@ -72,6 +73,8 @@ export const cacheQuery = RavenLambdaWrapper.handler(Raven, async (event, contex
             const message = `Redis couldn't save the newer query results to the cache, "success": "${success}"`;
             Raven.captureException(message);
             logger.error(message);
+          } else {
+            logger.info('Successfully added an item to the redis cache');
           }
         })
         .catch((error) => {
@@ -89,6 +92,7 @@ export const cacheQuery = RavenLambdaWrapper.handler(Raven, async (event, contex
     };
   } else {
     cachedQueryResults = extractQueryResultsFromItem(cachedInfo);
+    logger.info('Retrieved data from redis cache');
   }
 
   return {
