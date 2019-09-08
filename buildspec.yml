@@ -1,11 +1,11 @@
 version: 0.2
-# XXX You only need to configure this if you want to configure CI builds
+# XXX I'm enabling CC but not slack
 env:
   # Please refer to https://github.com/UnlyEd/slack-codebuild
   variables:
-    SLACK_WEBHOOK_URL: "https://hooks.slack.com/services/xxxxx/xxxxxx/xxxxxxx" # TODO configure, then remove comment - Only necessary if you want to get notifications on your slack channel
+    SLACK_WEBHOOK_URL: ""
     CODEBUILD_NOTIFY_ONLY_IF_FAIL: 1
-    CC_TEST_REPORTER_ID: xxx # TODO configure, then remove comment (64 chars token) - Only necessary if you want to use CodeClimate
+    CC_TEST_REPORTER_ID: 2794fd9ec4611693828f39df8ebde9589e5bd7d336ee53ce4b9ad3664e310603
 
 phases: # XXX Shouldn't need to update this, except if you add advanced testing that needs particular configuration
   install:
